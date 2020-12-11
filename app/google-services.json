@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "338785156704",
+    "project_id": "card-stats",
+    "storage_bucket": "card-stats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:338785156704:android:5e4623193900e8ac638d05",
+        "android_client_info": {
+          "package_name": "com.iconic.bank_statistics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "338785156704-hvomsptf37s6g1v7nm36lhj3pml8eida.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.iconic.bank_statistics",
+            "certificate_hash": "e846d2e958488edbdcffba72f585325a98f44d62"
+          }
+        },
+        {
+          "client_id": "338785156704-iuai0aqomrpd4qhnqo484hntecc47470.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANZEZ_NIvwx6c9Z24cJl1grdBptuKAXq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "338785156704-iuai0aqomrpd4qhnqo484hntecc47470.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

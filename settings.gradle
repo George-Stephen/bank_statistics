@@ -1,2 +1,3 @@
 rootProject.name='Card_Statistics'
 include ':app'
+include ':services'

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/display_cards"
+        android:title="Cards"
+        android:icon="@drawable/baseline_apps_white_24dp"/>
+    <item
+        android:id="@+id/display_orders"
+        android:title="Orders"
+        android:icon="@drawable/baseline_style_white_24dp"/>
+    <item
+        android:id="@+id/log_out"
+        android:title="Log out"
+        android:icon="@drawable/baseline_open_in_new_white_24dp"/>
+</menu>

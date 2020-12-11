@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">Card_Statistics</string>
-
+    <string name="app_name">Card_Stats</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="product_id">Choose a product id</string>
+    <string-array name="country_codes">
+        <item>Choose country code</item>
+        <item>254</item>
+        <item>255</item>
+        <item>250</item>
+        <item>257</item>
+    </string-array>
 </resources>
