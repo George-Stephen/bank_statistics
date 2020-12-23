@@ -1,55 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.OrderFragment">
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
-        <Spinner
-            android:id="@+id/order_spinner"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:background="@drawable/edit_button"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp"
-            android:prompt="@string/product_id"/>
-        <Spinner
-            android:id="@+id/country_order_spinner"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:background="@drawable/edit_button"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp"
-            android:entries="@array/country_codes"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <Spinner
+                android:id="@+id/country_spinner"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:background="@drawable/edit_button"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="20dp"/>
+
+            <Spinner
+                android:id="@+id/branch_spinner"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:background="@drawable/edit_button"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
         <Button
-            android:id="@+id/get_orders"
+            android:id="@+id/get_issues"
             android:layout_width="250dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:text="Get orders"
+            android:text="Get application"
             android:textColor="@android:color/white"
             android:background="@drawable/button_round"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            app:cardCornerRadius="20dp">
+            app:cardCornerRadius="10dp"
+            android:layout_margin="10dp">
+
             <TextView
-                android:id="@+id/total_orders"
+                android:id="@+id/view_apps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="All applications"
                 android:textSize="25sp"
-                android:layout_margin="10dp"
-                android:text="Number of orders"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                android:layout_margin="10dp"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="5dp"
+            android:layout_margin="10dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/view_applications"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/border"/>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

@@ -15,18 +15,12 @@ public class Order {
     @SerializedName("product_code")
     @Expose
     private String productCode;
-    @SerializedName("branch_name")
-    @Expose
-    private String branchName;
     @SerializedName("branch_code")
     @Expose
     private String branchCode;
     @SerializedName("country_code")
     @Expose
     private String countryCode;
-    @SerializedName("country_name")
-    @Expose
-    private String countryName;
     @SerializedName("order_qty")
     @Expose
     private Integer orderQty;
@@ -55,14 +49,6 @@ public class Order {
         this.productCode = productCode;
     }
 
-    public String getBranchName() {
-        return branchName;
-    }
-
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
-    }
-
     public String getBranchCode() {
         return branchCode;
     }
@@ -77,14 +63,6 @@ public class Order {
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
     }
 
     public Integer getOrderQty() {

@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +17,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.iconic.bank_statistics.R;
+import com.iconic.bank_statistics.adapters.CardAdapter;
+import com.iconic.bank_statistics.adapters.OrderAdapter;
 import com.iconic.services.StatsClient;
 import com.iconic.services.StatsInterface;
+import com.iconic.services.models.Branch;
+import com.iconic.services.models.Country;
+import com.iconic.services.models.Issue;
 import com.iconic.services.models.Order;
 import com.iconic.services.models.Product;
 
@@ -40,11 +47,13 @@ import retrofit2.Response;
  * Use the {@link OrderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OrderFragment extends Fragment {
-    @BindView(R.id.total_orders) TextView mTotalOrders;
-    @BindView(R.id.order_spinner) Spinner mOrderProduct;
-    @BindView(R.id.country_order_spinner) Spinner mCountrySpinner;
-    @BindView(R.id.get_orders) Button mGetOrders;
+public class OrderFragment extends Fragment implements View.OnClickListener {
+    @BindView(R.id.country_spinner) Spinner mCountrySpinner;
+    @BindView(R.id.branch_spinner) Spinner mBranchSpinner;
+    @BindView(R.id.view_apps) TextView mViewApps;
+    @BindView(R.id.view_applications) RecyclerView mViewApplications;
+    @BindView(R.id.get_issues) Button mGetIssues;
+    private CardAdapter adapter;
 
     public OrderFragment() {
         // Required empty public constructor
@@ -66,73 +75,99 @@ public class OrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_order, container, false);
        ButterKnife.bind(this,view);
-       getProductSpinner();
-       mGetOrders.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               String product_code = mOrderProduct.getSelectedItem().toString();
-               String country_code = mCountrySpinner.getSelectedItem().toString();
-               get_orders(product_code,country_code);
-           }
-       });
+       get_countries();
+       get_branches();
+       mGetIssues.setOnClickListener(this);
        return view;
     }
-    private void getProductSpinner(){
+
+    @Override
+    public void onClick(View v) {
+        if (v ==  mGetIssues){
+            String branch_code = mBranchSpinner.getSelectedItem().toString();
+            String country_code = mCountrySpinner.getSelectedItem().toString();
+            get_issues(country_code,branch_code);
+        }
+    }
+    private void get_countries(){
         StatsInterface client = StatsClient.getClient();
-        Call<List<Product>> call = client.get_cards();
-        call.enqueue(new Callback<List<Product>>() {
+        Call<List<Country>> call = client.get_country();
+        call.enqueue(new Callback<List<Country>>() {
             @Override
-            public void onResponse(@NotNull Call<List<Product>> call, @NotNull Response<List<Product>> response) {
-                List<Product> products = response.body();
-                List<String> product_id_s = new ArrayList<>();
-                product_id_s.add("Select the product type");
-                assert products != null;
-                for (Product product : products){
-                    String text = product.getProductName();
-                    product_id_s.add(text);
+            public void onResponse(@NotNull Call<List<Country>> call, @NotNull Response<List<Country>> response) {
+                List<Country> countries = response.body();
+                List<String> country_names = new ArrayList<>();
+                assert countries != null;
+                for (Country country : countries){
+                    String c_name = country.getCountryCode();
+                    country_names.add(c_name);
                 }
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), android.R.layout.simple_spinner_item, product_id_s);
-                mOrderProduct.setAdapter(arrayAdapter);
-                arrayAdapter.notifyDataSetChanged();
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),android.R.layout.simple_spinner_item,country_names);
+                mCountrySpinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<List<Country>> call, @NotNull Throwable t) {
+            }
+        });
+    }
+    private void get_branches(){
+        StatsInterface client = StatsClient.getClient();
+        Call<List<Branch>> call = client.get_branch();
+        call.enqueue(new Callback<List<Branch>>() {
+            @Override
+            public void onResponse(@NotNull Call<List<Branch>> call, @NotNull Response<List<Branch>> response) {
+                List<Branch> branches = response.body();
+                List<String> branch_name = new ArrayList<>();
+                assert branches != null;
+                for (Branch branch : branches){
+                    String text = branch.getBranchName();
+                    branch_name.add(text);
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),android.R.layout.simple_spinner_item,branch_name);
+                mBranchSpinner.setAdapter(adapter);
 
             }
 
             @Override
-            public void onFailure(@NotNull Call<List<Product>> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<List<Branch>> call, @NotNull Throwable t) {
 
             }
         });
     }
-    private void get_orders(String product_name, final String country_code){
+    private void get_issues(final String country_code, String branch_name){
         StatsInterface client = StatsClient.getClient();
-        Call<List<Product>> product_call = client.get_card(product_name);
-        product_call.enqueue(new Callback<List<Product>>() {
+        Call<List<Branch>> call = client.get_branch_code(branch_name);
+        call.enqueue(new Callback<List<Branch>>() {
             @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                List<Product> products = response.body();
-                String product_code = products.get(0).getProductCode();
+            public void onResponse(@NotNull Call<List<Branch>> call, @NotNull Response<List<Branch>> response) {
+                List<Branch> branches = response.body();
+                String branch_code = branches.get(0).getBranchCode();
                 StatsInterface client = StatsClient.getClient();
-                Call<List<Order>> order_call = client.get_order(product_code,country_code);
-                order_call.enqueue(new Callback<List<Order>>() {
+                Call<List<Issue>> call_1 = client.get_issues(branch_code,country_code);
+                call_1.enqueue(new Callback<List<Issue>>() {
                     @SuppressLint("SetTextI18n")
                     @Override
-                    public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
-                        List<Order> orders = new ArrayList<>();
-                        orders = response.body();
-                        assert orders != null;
-                        String total = Integer.toString(orders.size());
-                        mTotalOrders.setText("Number of orders " + ":" + total);
+                    public void onResponse(@NotNull Call<List<Issue>> call, @NotNull Response<List<Issue>> response) {
+                        List<Issue> issues = response.body();
+                        assert issues != null;
+                        int issues_count = issues.size();
+                        mViewApps.setText("All applications :" + issues_count);
+                        adapter = new CardAdapter(getContext(),issues);
+                        mViewApplications.setNestedScrollingEnabled(false);
+                        mViewApplications.setAdapter(adapter);
+                        mViewApplications.setLayoutManager(new LinearLayoutManager(getContext()));
                     }
 
                     @Override
-                    public void onFailure(Call<List<Order>> call, Throwable t) {
+                    public void onFailure(@NotNull Call<List<Issue>> call, @NotNull Throwable t) {
 
                     }
                 });
             }
 
             @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
+            public void onFailure(Call<List<Branch>> call, Throwable t) {
 
             }
         });

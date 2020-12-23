@@ -9,94 +9,90 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="10dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Welcome to bank stats"
+            android:text="Register"
             android:textStyle="bold"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textAlignment="center"/>
         <EditText
             android:id="@+id/register_name"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:background="@drawable/edit_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center"
             android:inputType="text"
             android:textColor="#778899"
             android:hint="Full name"/>
         <EditText
             android:id="@+id/register_phone"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:background="@drawable/edit_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center"
             android:inputType="phone"
             android:textColor="#778899"
             android:hint="Phone number"/>
         <EditText
             android:id="@+id/register_email"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:background="@drawable/edit_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center"
             android:textColor="#778899"
             android:inputType="textEmailAddress"
             android:hint="Email address"/>
         <EditText
-            android:id="@+id/register_center"
-            android:layout_width="350dp"
-            android:layout_height="50dp"
-            android:background="@drawable/edit_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center"
-            android:textColor="#778899"
-            android:inputType="textEmailAddress"
-            android:hint="Card center"/>
-        <EditText
             android:id="@+id/register_password"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:background="@drawable/edit_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:inputType="textPassword"
             android:layout_gravity="center"
             android:textColor="#778899"
             android:hint="Password"/>
         <EditText
             android:id="@+id/confirm_password"
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:textColor="#778899"
             android:background="@drawable/edit_button"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center"
             android:inputType="textPassword"
             android:hint="Confirm password"/>
         <Button
             android:id="@+id/register_button"
-            android:layout_width="300dp"
-            android:layout_height="60dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:background="@drawable/button_round"
+            android:textAllCaps="false"
             android:text="Register"
             android:textColor="@android:color/white"
             android:layout_gravity="center"/>
-        <TextView
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/login_text"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login here"
-            android:textSize="15sp"
-            android:textAlignment="center"/>
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/baseline_add_white_24dp"
+            android:clickable="true"
+            app:backgroundTint="#8FBC8F"
+            android:layout_margin="16dp"
+            app:borderWidth="0dp"
+            app:elevation="6dp"
+            app:fabSize="normal"
+            android:focusable="true" />
     </LinearLayout>
 </ScrollView>

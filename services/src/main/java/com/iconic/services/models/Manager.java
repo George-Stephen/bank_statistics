@@ -1,4 +1,3 @@
-
 package com.iconic.services.models;
 
 import com.google.gson.annotations.Expose;
@@ -6,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Manager {
 
-    @SerializedName("card_center")
+    @SerializedName("id")
     @Expose
-    private String cardCenter;
+    private Integer id;
     @SerializedName("full_name")
     @Expose
     private String fullName;
@@ -18,13 +17,16 @@ public class Manager {
     @SerializedName("email_address")
     @Expose
     private String emailAddress;
+    @SerializedName("password")
+    @Expose
+    private String password;
 
-    public String getCardCenter() {
-        return cardCenter;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCardCenter(String cardCenter) {
-        this.cardCenter = cardCenter;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFullName() {
@@ -49,6 +51,14 @@ public class Manager {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

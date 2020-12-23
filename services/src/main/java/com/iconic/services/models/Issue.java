@@ -15,6 +15,12 @@ public class Issue {
     @SerializedName("product_code")
     @Expose
     private String productCode;
+    @SerializedName("country_code")
+    @Expose
+    private String countryCode;
+    @SerializedName("branch_code")
+    @Expose
+    private String branchCode;
     @SerializedName("date_issued")
     @Expose
     private String dateIssued;
@@ -41,6 +47,22 @@ public class Issue {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getBranchCode() {
+        return branchCode;
+    }
+
+    public void setBranchCode(String branchCode) {
+        this.branchCode = branchCode;
     }
 
     public String getDateIssued() {

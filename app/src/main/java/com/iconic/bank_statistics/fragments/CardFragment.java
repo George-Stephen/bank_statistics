@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +17,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.iconic.bank_statistics.R;
+import com.iconic.bank_statistics.adapters.CardAdapter;
+import com.iconic.bank_statistics.adapters.OrderAdapter;
 import com.iconic.services.StatsClient;
 import com.iconic.services.StatsInterface;
+import com.iconic.services.models.Branch;
+import com.iconic.services.models.Country;
 import com.iconic.services.models.Issue;
 import com.iconic.services.models.Order;
 import com.iconic.services.models.Product;
@@ -41,14 +47,14 @@ import retrofit2.Response;
  * Use the {@link CardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CardFragment extends Fragment {
-    @BindView(R.id.cards_chart) PieChartView mCardsChart;
-    @BindView(R.id.product_spinner) Spinner mProductSpinner;
-    @BindView(R.id.country_spinner) Spinner mCountrySpinner;
-    @BindView(R.id.get_stats) Button mGetStats;
-    @BindView(R.id.remaining_cards) TextView mRemainingCards;
-    @BindView(R.id.issued_cards) TextView mIssuedCards;
-    List<SliceValue> pie_data = new ArrayList<>();
+public class CardFragment extends Fragment implements View.OnClickListener{
+    @BindView(R.id.view_applications) RecyclerView mIssueList;
+    @BindView(R.id.view_chart) PieChartView mIssueChart;
+    @BindView(R.id.country_order_spinner) Spinner mCountrySpinner;
+    @BindView(R.id.branch_order_spinner) Spinner mBranchSpinner;
+    @BindView(R.id.get_applications) Button mGetButton;
+    List< SliceValue > pieData = new ArrayList<>();
+    private OrderAdapter adapter;
 
 
     public CardFragment() {
@@ -70,106 +76,132 @@ public class CardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_card, container, false);
         ButterKnife.bind(this,view);
-        getProductSpinner();
-        mGetStats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String product_code ="";
-                product_code = mProductSpinner.getSelectedItem().toString();
-                String country_code = mCountrySpinner.getSelectedItem().toString();
-                get_orders(product_code,country_code);
-            }
-        });
+        get_countries();
+        get_branches();
+        mGetButton.setOnClickListener(this);
         return view;
     }
 
-   private void get_orders(final String product_name, final String country_code){
+    @Override
+    public void onClick(View v) {
+        if (v == mGetButton){
+            String country_code = mCountrySpinner.getSelectedItem().toString();
+            String branch_name = mBranchSpinner.getSelectedItem().toString();
+            get_cardApplication(country_code,branch_name);
+        }
+    }
+
+    private void get_countries(){
         StatsInterface client = StatsClient.getClient();
-        Call<List<Product>> product_call = client.get_card(product_name);
-        product_call.enqueue(new Callback<List<Product>>() {
+        Call<List<Country>> call = client.get_country();
+        call.enqueue(new Callback<List<Country>>() {
             @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                List<Product> productList = response.body();
-                assert productList != null;
-                final String product_code  = productList.get(0).getProductCode();
-                StatsInterface client = StatsClient.getClient();
-                Call<List<Order>> order_call = client.get_order(product_code,country_code);
-                order_call.enqueue(new Callback<List<Order>>() {
-                    @Override
-                    public void onResponse(@NotNull Call<List<Order>> call, @NotNull Response<List<Order>> response) {
-                        List<Order>orders= response.body();
-                        int sum = 0;
-                        assert orders != null;
-                        for (Order order : orders){
-                            sum+= order.getOrderQty();
-                        }
-                        StatsInterface client = StatsClient.getClient();
-                        Call<List<Issue>> call_2 = client.get_issues(product_code);
-                        final int finalSum = sum;
-                        call_2.enqueue(new Callback<List<Issue>>() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onResponse(@NotNull Call<List<Issue>> call, @NotNull Response<List<Issue>> response) {
-                                assert response.body() != null;
-                                int total_issues = response.body().size();
-                                int rem = finalSum - total_issues;
-                                float rem_percent =(float) ((rem*100) / finalSum);
-                                float issue_percent = (float) ((total_issues * 100) / finalSum);
-                                pie_data.add(new SliceValue(rem_percent,Color.RED).setLabel("Remaining cards " + ":" + rem));
-                                pie_data.add(new SliceValue(issue_percent,Color.BLUE).setLabel("Issued cards " + ":" + total_issues));
-                                mIssuedCards.setText("Issued cards "+ ":" + total_issues);
-                                mRemainingCards.setText("Remaining cards "+":"+ rem);
-                                PieChartData chartData = new PieChartData(pie_data);
-                                chartData.setHasLabels(true).setValueLabelTextSize(12);
-                                chartData.setHasCenterCircle(true).setCenterText1("Number of cards").setCenterText1FontSize(20).setCenterText1Color(Color.parseColor("#0097A7"));;
-                                mCardsChart.setPieChartData(chartData);
-
-                            }
-
-                            @Override
-                            public void onFailure(@NotNull Call<List<Issue>> call, @NotNull Throwable t) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(@NotNull Call<List<Order>> call, @NotNull Throwable t) {
-
-                    }
-                });
+            public void onResponse(@NotNull Call<List<Country>> call, @NotNull Response<List<Country>> response) {
+                List<Country> countries = response.body();
+                List<String> country_names = new ArrayList<>();
+                assert countries != null;
+                for (Country country : countries){
+                    String c_name = country.getCountryCode();
+                    country_names.add(c_name);
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),android.R.layout.simple_spinner_item,country_names);
+                mCountrySpinner.setAdapter(adapter);
             }
 
             @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<Country>> call, @NotNull Throwable t) {
+            }
+        });
+    }
+    private void get_branches(){
+        StatsInterface client = StatsClient.getClient();
+        Call<List<Branch>> call = client.get_branch();
+        call.enqueue(new Callback<List<Branch>>() {
+            @Override
+            public void onResponse(@NotNull Call<List<Branch>> call, @NotNull Response<List<Branch>> response) {
+                List<Branch> branches = response.body();
+                List<String> branch_name = new ArrayList<>();
+                assert branches != null;
+                for (Branch branch : branches){
+                    String text = branch.getBranchName();
+                    branch_name.add(text);
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),android.R.layout.simple_spinner_item,branch_name);
+                mBranchSpinner.setAdapter(adapter);
+
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<List<Branch>> call, @NotNull Throwable t) {
 
             }
         });
     }
-    private void getProductSpinner(){
-        StatsInterface client = StatsClient.getClient();
-        Call<List<Product>> call = client.get_cards();
-        call.enqueue(new Callback<List<Product>>() {
-            @Override
-            public void onResponse(@NotNull Call<List<Product>> call, @NotNull Response<List<Product>> response) {
-                List<Product> products = response.body();
-                List<String> product_id_s = new ArrayList<>();
-                product_id_s.add("Select the product type");
-                assert products != null;
-                for (Product product : products){
-                    String text = product.getProductName();
-                    product_id_s.add(text);
+
+    private void get_cardApplication(final String country_code, String branch_name){
+            StatsInterface client = StatsClient.getClient();
+            Call<List<Branch>> call = client.get_branch_code(branch_name);
+            call.enqueue(new Callback<List<Branch>>() {
+                @Override
+                public void onResponse(@NotNull Call<List<Branch>> call, @NotNull Response<List<Branch>> response) {
+                    List<Branch> branches = response.body();
+                    assert branches != null;
+                    Branch branch = branches.get(0);
+                    final String branch_code = branch.getBranchCode();
+                    StatsInterface statsInterface = StatsClient.getClient();
+                    Call<List<Order>> call_1 = statsInterface.get_orders(branch_code,country_code);
+                    call_1.enqueue(new Callback<List<Order>>() {
+                        @Override
+                        public void onResponse(@NotNull Call<List<Order>> call, @NotNull Response<List<Order>> response) {
+                            List<Order> orders = response.body();
+                            adapter = new OrderAdapter(getContext(),orders);
+                            mIssueList.setAdapter(adapter);
+                            mIssueList.setNestedScrollingEnabled(false);
+                            mIssueList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                            int sum = 0;
+                            assert orders != null;
+                            for (Order order : orders){
+                                sum+=order.getOrderQty();
+                            }
+                            StatsInterface client = StatsClient.getClient();
+                            Call<List<Issue>> call_2 = client.get_issues(branch_code,country_code);
+                            final int finalSum = sum;
+                            call_2.enqueue(new Callback<List<Issue>>() {
+                                @Override
+                                public void onResponse(@NotNull Call<List<Issue>> call, @NotNull Response<List<Issue>> response) {
+                                    List<Issue> issues = response.body();
+                                    assert issues != null;
+                                    int issue_quantity = issues.size();
+                                    int remaining = finalSum - issue_quantity;
+                                    double issue_percent = (double) ((issue_quantity * 100) / finalSum);
+                                    double rem_percent = (double) ((remaining * 100) / finalSum);
+                                    pieData.add(new SliceValue((float) issue_percent, Color.parseColor("#8FBC8F")));
+                                    pieData.add(new SliceValue((float) rem_percent, Color.parseColor("#D3D3D3")));
+                                    PieChartData pieChartData = new PieChartData(pieData);
+                                    pieChartData.setHasCenterCircle(true).setCenterText1("Cards issued").setCenterText1FontSize(12).setCenterText1Color(Color.parseColor("#0097A7"));
+                                    mIssueChart.setPieChartData(pieChartData);
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull Call<List<Issue>> call, @NotNull Throwable t) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call<List<Order>> call, @NotNull Throwable t) {
+
+                        }
+                    });
+
                 }
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getActivity()), android.R.layout.simple_spinner_item, product_id_s);
-                mProductSpinner.setAdapter(arrayAdapter);
-                arrayAdapter.notifyDataSetChanged();
 
-            }
+                @Override
+                public void onFailure(@NotNull Call<List<Branch>> call, @NotNull Throwable t) {
 
-            @Override
-            public void onFailure(@NotNull Call<List<Product>> call, @NotNull Throwable t) {
-
-            }
-        });
+                }
+            });
     }
 }
