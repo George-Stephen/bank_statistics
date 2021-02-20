@@ -3,6 +3,7 @@ package com.iconic.bank_statistics;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,12 +37,19 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.register_name) EditText mRegisterName;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.register_phone) EditText mRegisterPhone;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.register_email) EditText mRegisterEmail;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.register_password) EditText mRegisterPassword;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.confirm_password) EditText mConfirmPassword;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.register_button) Button mRegisterButton;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.login_text) FloatingActionButton mLoginText;
     private ProgressDialog mAuthProgress;
     @Override

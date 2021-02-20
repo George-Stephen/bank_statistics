@@ -56,9 +56,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardHolder> {
 
 
     static class CardHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.issue_code) TextView mIssueCode;
+        @SuppressLint("NonConstantResourceId")
         @BindView(R.id.issue_name) TextView mIssueName;
+        @SuppressLint("NonConstantResourceId")
         @BindView(R.id.issue_date) TextView mIssueDate;
+        @SuppressLint("NonConstantResourceId")
+        @BindView(R.id.issue_account) TextView mIssueAccount;
+        @SuppressLint("NonConstantResourceId")
+        @BindView(R.id.issue_status) TextView mIssueStatus;
 
          public CardHolder(@NonNull View itemView) {
              super(itemView);
@@ -67,8 +72,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardHolder> {
 
 
          public void bind_card(final Issue issue){
-             mIssueCode.setText(issue.getProductCode());
-             mIssueDate.setText(issue.getDateIssued());
              String product_code = issue.getProductCode();
              StatsInterface client = StatsClient.getClient();
              Call<List<Product>> call = client.get_product(product_code);
@@ -79,6 +82,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardHolder> {
                      assert products != null;
                      Product product = products.get(0);
                      mIssueName.setText(product.getProductName());
+                     mIssueDate.setText(issue.getDateIssued());
+                     mIssueAccount.setText(issue.getAccountName());
+                     mIssueStatus.setText(issue.getStatus());
                  }
 
                  @Override

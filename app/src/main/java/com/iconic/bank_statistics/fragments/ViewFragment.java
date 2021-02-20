@@ -1,7 +1,6 @@
 package com.iconic.bank_statistics.fragments;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,18 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.iconic.bank_statistics.R;
 import com.iconic.bank_statistics.adapters.CardAdapter;
-import com.iconic.bank_statistics.adapters.OrderAdapter;
+import com.iconic.bank_statistics.adapters.ViewAdapter;
 import com.iconic.services.StatsClient;
 import com.iconic.services.StatsInterface;
 import com.iconic.services.models.Branch;
 import com.iconic.services.models.Country;
 import com.iconic.services.models.Issue;
 import com.iconic.services.models.Order;
-import com.iconic.services.models.Product;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -36,43 +33,29 @@ import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import lecho.lib.hellocharts.model.PieChartData;
-import lecho.lib.hellocharts.model.SliceValue;
-import lecho.lib.hellocharts.view.PieChartView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OrderFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class OrderFragment extends Fragment implements View.OnClickListener {
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.country_spinner) Spinner mCountrySpinner;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.branch_spinner) Spinner mBranchSpinner;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.view_apps) TextView mViewApps;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.card_progress) ProgressBar mCardProgress;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.view_app) RecyclerView mViewApplications;
-    @SuppressLint("NonConstantResourceId")
-    @BindView(R.id.get_issues) Button mGetIssues;
-    private CardAdapter adapter;
 
-    public OrderFragment() {
+public class ViewFragment extends Fragment  implements View.OnClickListener  {
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.branch_display_spinner) Spinner mDisplayBranch;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.country_display_spinner) Spinner mCountryBranch;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.get_order) Button mGetOrder;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.order_progress) ProgressBar mCardProgress;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.display_order) RecyclerView mViewOrders;
+    private ViewAdapter adapter;
+
+
+    public ViewFragment() {
         // Required empty public constructor
     }
 
-    public static OrderFragment newInstance(String param1, String param2) {
-        OrderFragment fragment = new OrderFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,23 +63,24 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_order, container, false);
-       ButterKnife.bind(this,view);
-       get_countries();
-       get_branches();
-       mGetIssues.setOnClickListener(this);
-       return view;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_view, container, false);
+        ButterKnife.bind(this,view);
+        get_countries();
+        get_branches();
+        mGetOrder.setOnClickListener(this);
+        return view;
     }
 
     @Override
     public void onClick(View v) {
-        if (v ==  mGetIssues){
-            String branch_code = mBranchSpinner.getSelectedItem().toString();
-            String country_code = mCountrySpinner.getSelectedItem().toString();
-            get_issues(country_code,branch_code);
+        if (v == mGetOrder){
+            String country = mCountryBranch.getSelectedItem().toString();
+            String branch = mDisplayBranch.getSelectedItem().toString();
+            get_issues(country,branch);
         }
     }
+
     private void get_countries(){
         StatsInterface client = StatsClient.getClient();
         Call<List<Country>> call = client.get_country();
@@ -111,7 +95,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     country_names.add(c_name);
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),android.R.layout.simple_spinner_item,country_names);
-                mCountrySpinner.setAdapter(adapter);
+                mCountryBranch.setAdapter(adapter);
             }
 
             @Override
@@ -133,7 +117,7 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
                     branch_name.add(text);
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(Objects.requireNonNull(getActivity()),android.R.layout.simple_spinner_item,branch_name);
-                mBranchSpinner.setAdapter(adapter);
+                mDisplayBranch.setAdapter(adapter);
 
             }
 
@@ -149,28 +133,25 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
         call.enqueue(new Callback<List<Branch>>() {
             @Override
             public void onResponse(@NotNull Call<List<Branch>> call, @NotNull Response<List<Branch>> response) {
+                show_progress();
                 List<Branch> branches = response.body();
                 String branch_code = branches.get(0).getBranchCode();
                 StatsInterface client = StatsClient.getClient();
-                Call<List<Issue>> call_1 = client.get_issues(branch_code,country_code);
-                call_1.enqueue(new Callback<List<Issue>>() {
-                    @SuppressLint("SetTextI18n")
+                Call<List<Order>> call_1 = client.get_orders(branch_code,country_code);
+                call_1.enqueue(new Callback<List<Order>>() {
                     @Override
-                    public void onResponse(@NotNull Call<List<Issue>> call, @NotNull Response<List<Issue>> response) {
-                        show_progress();
-                        List<Issue> issues = response.body();
-                        assert issues != null;
-                        int issues_count = issues.size();
-                        mViewApps.setText("All applications : " + issues_count);
-                        adapter = new CardAdapter(getContext(),issues);
-                        mViewApplications.setNestedScrollingEnabled(false);
-                        mViewApplications.setAdapter(adapter);
-                        mViewApplications.setLayoutManager(new LinearLayoutManager(getContext()));
+                    public void onResponse(@NotNull Call<List<Order>> call, @NotNull Response<List<Order>> response) {
+                        List<Order> orders = response.body();
+                        adapter = new ViewAdapter(orders,getContext());
+                        mViewOrders.setNestedScrollingEnabled(false);
+                        mViewOrders.setAdapter(adapter);
+                        mViewOrders.setLayoutManager(new LinearLayoutManager(getContext()));
                         show_applications();
+
                     }
 
                     @Override
-                    public void onFailure(@NotNull Call<List<Issue>> call, @NotNull Throwable t) {
+                    public void onFailure(Call<List<Order>> call, Throwable t) {
 
                     }
                 });
@@ -187,7 +168,6 @@ public class OrderFragment extends Fragment implements View.OnClickListener {
     }
     private void show_applications(){
         mCardProgress.setVisibility(View.GONE);
-        mViewApplications.setVisibility(View.VISIBLE);
+        mViewOrders.setVisibility(View.VISIBLE);
     }
-
 }

@@ -60,6 +60,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderHolder>
         @BindView(R.id.display_quantity) TextView mDisplayQuantity;
         @BindView(R.id.display_rem) TextView mDisplayRemaining;
         @BindView(R.id.display_iss) TextView mDisplayIssued;
+        int sum = 0;
 
         public OrderHolder(@NonNull View itemView) {
             super(itemView);

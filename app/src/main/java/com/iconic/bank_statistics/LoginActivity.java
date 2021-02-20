@@ -3,6 +3,7 @@ package com.iconic.bank_statistics;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,10 +38,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.login_email) EditText mLoginEmail;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.login_password) EditText mLoginPassword;
-    @BindView(R.id.register_text) FloatingActionButton mRegisterText;
-    @BindView(R.id.login_button) Button mLoginButton;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.login_button) FloatingActionButton mLoginButton;
     private ProgressDialog mAuthProgressDialog;
 
     @Override
@@ -49,35 +52,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mLoginButton.setOnClickListener(this);
-        mRegisterText.setOnClickListener(this);
         createAuthProgressDialog();
     }
 
     @Override
     public void onClick(View v) {
         if (v == mLoginButton){
-            String email_address = mLoginEmail.getText().toString();
-            byte[] salt = Constants.password_salt.getBytes();
-            String password = mLoginPassword.getText().toString();
-            try {
-                password = Security.getHashPassword(password, salt);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            if (email_address.equals("")){
+            if (mLoginEmail.getText().toString().equals("")){
                 mLoginEmail.setError("Please enter your Email address");
-                return;
             }
-            if (password.equals("")){
+            if (mLoginPassword.getText().toString().equals("")){
                 mLoginPassword.setError("Please enter your password");
-                return;
+            }else {
+                String email_address = mLoginEmail.getText().toString();
+                byte[] salt = Constants.password_salt.getBytes();
+                String password = mLoginPassword.getText().toString();
+                try {
+                    password = Security.getHashPassword(password, salt);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                get_manager(email_address,password);
             }
-            get_manager(email_address,password);
-        }
-        if (v == mRegisterText){
-            Intent i = new Intent(LoginActivity.this,RegisterActivity.class);
-            startActivity(i);
-            finish();
+
         }
     }
     private void get_manager(String email_address,String password){
@@ -93,7 +90,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     assert managers != null;
                     Manager manager = managers.get(0);
                     Toast.makeText(LoginActivity.this,"Welcome back " + manager.getFullName() + " ;",Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(LoginActivity.this,MainActivity.class);
+                    Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
                     startActivity(i);
                     finish();
                 }

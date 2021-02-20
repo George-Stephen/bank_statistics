@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.iconic.bank_statistics.fragments.CardFragment;
 import com.iconic.bank_statistics.fragments.OrderFragment;
+import com.iconic.bank_statistics.fragments.ViewFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.display_orders:
                 fragment = new OrderFragment();
                 break;
+            case R.id.view_orders:
+                fragment = new ViewFragment();
+                break;
+
         }
         return loadFragment(fragment);
     }

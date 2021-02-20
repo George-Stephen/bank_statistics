@@ -1,44 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
-    android:layout_margin="2dp"
-    android:padding="5dp"
-    android:background="@drawable/border">
+    android:padding="10dp">
     <TextView
         android:id="@+id/display_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Product_name"
+        android:textColor="#000"
+        android:fontFamily="serif"
         android:textAlignment="center"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:textSize="12sp" />
+        android:layout_weight="1" />
     <TextView
         android:id="@+id/display_quantity"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Quantity"
+        android:textColor="#000"
+        android:fontFamily="serif"
         android:textAlignment="center"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:textSize="12sp" />
+        android:layout_weight="1" />
     <TextView
         android:id="@+id/display_iss"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Issued"
+        android:textColor="#000"
+        android:fontFamily="serif"
         android:textAlignment="center"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:textSize="12sp" />
+        android:layout_weight="1" />
     <TextView
         android:id="@+id/display_rem"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:text="Remaining"
+        android:fontFamily="serif"
         android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="12sp"/>
+        android:textColor="#000"/>
 </TableRow>

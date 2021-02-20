@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -48,10 +49,17 @@ import retrofit2.Response;
  * create an instance of this fragment.
  */
 public class CardFragment extends Fragment implements View.OnClickListener{
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.view_applications) RecyclerView mIssueList;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.view_chart) PieChartView mIssueChart;
+    @SuppressLint("NonConstantResourceId")
+    @BindView(R.id.app_progress) ProgressBar mAppProgress;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.country_order_spinner) Spinner mCountrySpinner;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.branch_order_spinner) Spinner mBranchSpinner;
+    @SuppressLint("NonConstantResourceId")
     @BindView(R.id.get_applications) Button mGetButton;
     List< SliceValue > pieData = new ArrayList<>();
     private OrderAdapter adapter;
@@ -149,15 +157,17 @@ public class CardFragment extends Fragment implements View.OnClickListener{
                     Branch branch = branches.get(0);
                     final String branch_code = branch.getBranchCode();
                     StatsInterface statsInterface = StatsClient.getClient();
-                    Call<List<Order>> call_1 = statsInterface.get_orders(branch_code,country_code);
+                    Call<List<Order>> call_1 = statsInterface.get_issued_orders(branch_code,country_code,"dispatched");
                     call_1.enqueue(new Callback<List<Order>>() {
                         @Override
                         public void onResponse(@NotNull Call<List<Order>> call, @NotNull Response<List<Order>> response) {
+                            show_progress();
                             List<Order> orders = response.body();
                             adapter = new OrderAdapter(getContext(),orders);
                             mIssueList.setAdapter(adapter);
                             mIssueList.setNestedScrollingEnabled(false);
                             mIssueList.setLayoutManager(new LinearLayoutManager(getContext()));
+                            show_applications();
 
                             int sum = 0;
                             assert orders != null;
@@ -176,9 +186,10 @@ public class CardFragment extends Fragment implements View.OnClickListener{
                                     int remaining = finalSum - issue_quantity;
                                     double issue_percent = (double) ((issue_quantity * 100) / finalSum);
                                     double rem_percent = (double) ((remaining * 100) / finalSum);
-                                    pieData.add(new SliceValue((float) issue_percent, Color.parseColor("#8FBC8F")));
-                                    pieData.add(new SliceValue((float) rem_percent, Color.parseColor("#D3D3D3")));
+                                    pieData.add(new SliceValue((float) issue_percent, Color.parseColor("#8FBC8F")).setLabel(String.valueOf(issue_quantity)));
+                                    pieData.add(new SliceValue((float) rem_percent, Color.parseColor("#D3D3D3")).setLabel(String.valueOf(remaining)));
                                     PieChartData pieChartData = new PieChartData(pieData);
+                                    pieChartData.setHasLabels(true);
                                     pieChartData.setHasCenterCircle(true).setCenterText1("Cards issued").setCenterText1FontSize(12).setCenterText1Color(Color.parseColor("#0097A7"));
                                     mIssueChart.setPieChartData(pieChartData);
                                 }
@@ -203,5 +214,14 @@ public class CardFragment extends Fragment implements View.OnClickListener{
 
                 }
             });
+    }
+
+    private void show_progress(){
+        mAppProgress.setVisibility(View.VISIBLE);
+    }
+
+    private void show_applications(){
+        mAppProgress.setVisibility(View.GONE);
+        mIssueList.setVisibility(View.VISIBLE);
     }
 }

@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="40dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,29 +39,20 @@
             android:textColor="#778899"
             android:layout_gravity="center"
             android:hint="Password"/>
-        <Button
-            android:id="@+id/login_button"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:background="@drawable/button_round"
-            android:text="Login"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/register_text"
+            android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:src="@drawable/baseline_add_white_24dp"
-            android:clickable="true"
-            app:backgroundTint="#8FBC8F"
             android:layout_margin="16dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="40dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/baseline_how_to_reg_white_24dp"
+            app:backgroundTint="@color/colorAccent"
             app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            android:focusable="true"/>
+            app:elevation="5dp"
+            app:fabSize="normal" />
     </LinearLayout>
 </ScrollView>

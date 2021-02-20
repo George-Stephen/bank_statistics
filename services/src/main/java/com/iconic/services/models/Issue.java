@@ -21,6 +21,12 @@ public class Issue {
     @SerializedName("branch_code")
     @Expose
     private String branchCode;
+    @SerializedName("account_name")
+    @Expose
+    private String accountName;
+    @SerializedName("status")
+    @Expose
+    private String status;
     @SerializedName("date_issued")
     @Expose
     private String dateIssued;
@@ -63,6 +69,22 @@ public class Issue {
 
     public void setBranchCode(String branchCode) {
         this.branchCode = branchCode;
+    }
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDateIssued() {

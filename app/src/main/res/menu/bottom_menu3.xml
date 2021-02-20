@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/display_cards"
         android:title="Card inventory"
         android:icon="@drawable/baseline_apps_white_24dp"/>
     <item
-        android:id="@+id/display_orders"
         android:title="Card applications"
         android:icon="@drawable/baseline_style_white_24dp"/>
+    <item
+        android:title="All orders"
+        android:icon="@drawable/baseline_hourglass_bottom_white_24dp"/>
 </menu>

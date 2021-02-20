@@ -40,8 +40,14 @@ public interface StatsInterface {
     Call<List<Issue>> get_issue(@Query("order_ref") String order_ref);
 
     @GET("api/orders")
+    Call<List<Order>> get_issued_orders(@Query("branch_code") String branch_code,@Query("country_code") String country_code,@Query("status") String status);
+
+    @GET("api/orders")
     Call<List<Order>> get_orders(@Query("branch_code") String branch_code,@Query("country_code") String country_code);
-    
+
     @GET("api/issues")
     Call<List<Issue>> get_issues(@Query("branch_code") String branch_code,@Query("country_code") String country_code);
+
+    @GET("api/orders")
+    Call<List<Order>> get_order(@Query("product_code") String product_code);
 }

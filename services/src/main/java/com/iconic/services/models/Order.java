@@ -21,9 +21,15 @@ public class Order {
     @SerializedName("country_code")
     @Expose
     private String countryCode;
+    @SerializedName("status")
+    @Expose
+    private String status;
     @SerializedName("order_qty")
     @Expose
     private Integer orderQty;
+    @SerializedName("date_issued")
+    @Expose
+    private String dateIssued;
 
     public Integer getId() {
         return id;
@@ -65,12 +71,28 @@ public class Order {
         this.countryCode = countryCode;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public Integer getOrderQty() {
         return orderQty;
     }
 
     public void setOrderQty(Integer orderQty) {
         this.orderQty = orderQty;
+    }
+
+    public String getDateIssued() {
+        return dateIssued;
+    }
+
+    public void setDateIssued(String dateIssued) {
+        this.dateIssued = dateIssued;
     }
 
 }
