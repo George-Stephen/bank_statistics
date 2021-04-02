@@ -1,6 +1,7 @@
 package com.iconic.bank_statistics.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -146,7 +147,7 @@ public class CardFragment extends Fragment implements View.OnClickListener{
         });
     }
 
-    private void get_cardApplication(final String country_code, String branch_name){
+    private void get_cardApplication(final String country_code, final String branch_name){
             StatsInterface client = StatsClient.getClient();
             Call<List<Branch>> call = client.get_branch_code(branch_name);
             call.enqueue(new Callback<List<Branch>>() {
@@ -161,44 +162,55 @@ public class CardFragment extends Fragment implements View.OnClickListener{
                     call_1.enqueue(new Callback<List<Order>>() {
                         @Override
                         public void onResponse(@NotNull Call<List<Order>> call, @NotNull Response<List<Order>> response) {
-                            show_progress();
+
                             List<Order> orders = response.body();
-                            adapter = new OrderAdapter(getContext(),orders);
-                            mIssueList.setAdapter(adapter);
-                            mIssueList.setNestedScrollingEnabled(false);
-                            mIssueList.setLayoutManager(new LinearLayoutManager(getContext()));
-                            show_applications();
-
-                            int sum = 0;
                             assert orders != null;
-                            for (Order order : orders){
-                                sum+=order.getOrderQty();
+                            if (orders.isEmpty()){
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage(branch_name + " branch has no inventory");
+                                builder.setTitle("No data available");
+                                builder.setCancelable(true);
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                            }else{
+                                show_progress();
+                                adapter = new OrderAdapter(getContext(),orders);
+                                mIssueList.setAdapter(adapter);
+                                mIssueList.setNestedScrollingEnabled(false);
+                                mIssueList.setLayoutManager(new LinearLayoutManager(getContext()));
+                                show_applications();
+
+                                int sum = 0;
+                                for (Order order : orders){
+                                    sum+=order.getOrderQty();
+                                }
+                                StatsInterface client = StatsClient.getClient();
+                                Call<List<Issue>> call_2 = client.get_issues(branch_code,country_code);
+                                final int finalSum = sum;
+                                call_2.enqueue(new Callback<List<Issue>>() {
+                                    @Override
+                                    public void onResponse(@NotNull Call<List<Issue>> call, @NotNull Response<List<Issue>> response) {
+                                        List<Issue> issues = response.body();
+                                        assert issues != null;
+                                        int issue_quantity = issues.size();
+                                        int remaining = finalSum - issue_quantity;
+                                        double issue_percent = (double) ((issue_quantity * 100) / finalSum);
+                                        double rem_percent = (double) ((remaining * 100) / finalSum);
+                                        pieData.add(new SliceValue((float) issue_percent, Color.parseColor("#8FBC8F")).setLabel(String.valueOf(issue_quantity)));
+                                        pieData.add(new SliceValue((float) rem_percent, Color.parseColor("#D3D3D3")).setLabel(String.valueOf(remaining)));
+                                        PieChartData pieChartData = new PieChartData(pieData);
+                                        pieChartData.setHasLabels(true);
+                                        pieChartData.setHasCenterCircle(true).setCenterText1("Cards issued").setCenterText1FontSize(12).setCenterText1Color(Color.parseColor("#0097A7"));
+                                        mIssueChart.setPieChartData(pieChartData);
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NotNull Call<List<Issue>> call, @NotNull Throwable t) {
+
+                                    }
+                                });
                             }
-                            StatsInterface client = StatsClient.getClient();
-                            Call<List<Issue>> call_2 = client.get_issues(branch_code,country_code);
-                            final int finalSum = sum;
-                            call_2.enqueue(new Callback<List<Issue>>() {
-                                @Override
-                                public void onResponse(@NotNull Call<List<Issue>> call, @NotNull Response<List<Issue>> response) {
-                                    List<Issue> issues = response.body();
-                                    assert issues != null;
-                                    int issue_quantity = issues.size();
-                                    int remaining = finalSum - issue_quantity;
-                                    double issue_percent = (double) ((issue_quantity * 100) / finalSum);
-                                    double rem_percent = (double) ((remaining * 100) / finalSum);
-                                    pieData.add(new SliceValue((float) issue_percent, Color.parseColor("#8FBC8F")).setLabel(String.valueOf(issue_quantity)));
-                                    pieData.add(new SliceValue((float) rem_percent, Color.parseColor("#D3D3D3")).setLabel(String.valueOf(remaining)));
-                                    PieChartData pieChartData = new PieChartData(pieData);
-                                    pieChartData.setHasLabels(true);
-                                    pieChartData.setHasCenterCircle(true).setCenterText1("Cards issued").setCenterText1FontSize(12).setCenterText1Color(Color.parseColor("#0097A7"));
-                                    mIssueChart.setPieChartData(pieChartData);
-                                }
 
-                                @Override
-                                public void onFailure(@NotNull Call<List<Issue>> call, @NotNull Throwable t) {
-
-                                }
-                            });
                         }
 
                         @Override

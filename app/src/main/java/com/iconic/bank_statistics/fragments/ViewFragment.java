@@ -1,6 +1,7 @@
 package com.iconic.bank_statistics.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -127,7 +128,7 @@ public class ViewFragment extends Fragment  implements View.OnClickListener  {
             }
         });
     }
-    private void get_issues(final String country_code, String branch_name){
+    private void get_issues(final String country_code, final String branch_name){
         StatsInterface client = StatsClient.getClient();
         Call<List<Branch>> call = client.get_branch_code(branch_name);
         call.enqueue(new Callback<List<Branch>>() {
@@ -142,11 +143,21 @@ public class ViewFragment extends Fragment  implements View.OnClickListener  {
                     @Override
                     public void onResponse(@NotNull Call<List<Order>> call, @NotNull Response<List<Order>> response) {
                         List<Order> orders = response.body();
-                        adapter = new ViewAdapter(orders,getContext());
-                        mViewOrders.setNestedScrollingEnabled(false);
-                        mViewOrders.setAdapter(adapter);
-                        mViewOrders.setLayoutManager(new LinearLayoutManager(getContext()));
-                        show_applications();
+                        if (orders.isEmpty()){
+                            mCardProgress.setVisibility(View.GONE);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage(branch_name + " branch has no orders");
+                            builder.setTitle("No data available");
+                            builder.setCancelable(true);
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }else{
+                            adapter = new ViewAdapter(orders,getContext());
+                            mViewOrders.setNestedScrollingEnabled(false);
+                            mViewOrders.setAdapter(adapter);
+                            mViewOrders.setLayoutManager(new LinearLayoutManager(getContext()));
+                            show_applications();
+                        }
 
                     }
 

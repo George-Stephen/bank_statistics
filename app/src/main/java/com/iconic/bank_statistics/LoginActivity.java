@@ -1,5 +1,6 @@
 package com.iconic.bank_statistics;
 
+import android.app.AlertDialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -88,11 +89,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (response.isSuccessful()){
                     List<Manager> managers = response.body();
                     assert managers != null;
-                    Manager manager = managers.get(0);
-                    Toast.makeText(LoginActivity.this,"Welcome back " + manager.getFullName() + " ;",Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
-                    startActivity(i);
-                    finish();
+                    if (managers.isEmpty()){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                        builder.setMessage("Your account does not exist");
+                        builder.setTitle("Access denied");
+                        builder.setCancelable(true);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }else{
+                        Manager manager = managers.get(0);
+                        Toast.makeText(LoginActivity.this,"Welcome back " + manager.getFullName() + " ;",Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(LoginActivity.this,DashboardActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
                 }
             }
 

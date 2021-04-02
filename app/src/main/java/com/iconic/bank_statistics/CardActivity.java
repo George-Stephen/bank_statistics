@@ -1,5 +1,7 @@
 package com.iconic.bank_statistics;
 
+import android.view.Menu;
+import android.view.MenuInflater;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,12 +30,21 @@ public class CardActivity extends AppCompatActivity {
                 .replace(R.id.display_cards, new CardFragment())
                 .commit();
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.refresh_menu, menu);
+        return true;
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.new_activity:
+                startActivity(getIntent());
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
